@@ -1,3 +1,3 @@
 # Pong-Game
 
-![](pic2.png)
+![](pic2.jpg)
