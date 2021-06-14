@@ -3,6 +3,7 @@ Pong game
 """
 
 import turtle
+import os
 
 # Define windows and background
 win = turtle.Screen()
@@ -10,6 +11,12 @@ win.title("Pong_Game")
 win.bgcolor("black")
 win.setup(width=800, height=600)
 win.tracer(0)
+
+
+# Score
+score_a = 0
+score_b = 0
+
 
 
 # Paddle A
@@ -39,29 +46,40 @@ ball.shape("square")
 ball.color("white")
 ball.penup()
 ball.goto(0, 0)
-ball.dx = 0.3
-ball.dy = 0.3
+ball.dx = 0.1
+ball.dy = 0.1
+
+
+# Pen
+pen = turtle.Turtle()
+pen.speed(0)
+pen.color("white")
+pen.penup()
+pen.hideturtle()
+pen.goto(0, 280)
+pen.write("Player A: 0 Player B: 0", align="center", font=("Courier", 12, "normal"))
+
 
 
 # Function
 def paddle_a_up():
     y = paddle_a.ycor()
-    y += 20
+    y += 30
     paddle_a.sety(y)
 
 def paddle_a_down():
     y = paddle_a.ycor()
-    y -= 20
+    y -= 30
     paddle_a.sety(y)
 
 def paddle_b_up():
     y = paddle_b.ycor()
-    y += 20
+    y += 30
     paddle_b.sety(y)
 
 def paddle_b_down():
     y = paddle_b.ycor()
-    y -= 20
+    y -= 30
     paddle_b.sety(y)
 
 
@@ -96,9 +114,22 @@ while True:
     if ball.xcor() > 390:
         ball.goto(0, 0)
         ball.dx *= -1
+        score_a += 1
+        pen.clear()
+        pen.write("Player A: {} Player B: {}". format(score_a, score_b), align="center", font=("Courier", 12, "normal"))
 
     if ball.xcor() < -390:
         ball.goto(0, 0)
         ball.dx *= -1
+        score_b += 1
+        pen.clear()
+        pen.write("Player A: {} Player B: {}".format(score_a, score_b), align="center", font=("Courier", 12, "normal"))
 
+        # Paddle and ball collisions
+    if (ball.xcor() > 340 and ball.xcor() < 350) and (ball.ycor() < paddle_b.ycor() + 40 and ball.ycor() > paddle_b.ycor() - 40):
+        ball.setx(340)
+        ball.dx *= -1
 
+    if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddle_a.ycor() + 40 and ball.ycor() > paddle_a.ycor() - 40):
+        ball.setx(-340)
+        ball.dx *= -1
