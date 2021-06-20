@@ -16,6 +16,8 @@ win.tracer(0)
 # Score
 score_a = 0
 score_b = 0
+speed = 0
+Paddle_movement = 40
 
 
 
@@ -42,12 +44,12 @@ paddle_b.goto(350, 0)
 # Ball
 ball = turtle.Turtle()
 ball. speed(0)
-ball.shape("square")
+ball.shape("circle")
 ball.color("white")
 ball.penup()
 ball.goto(0, 0)
-ball.dx = 0.1
-ball.dy = 0.1
+ball.dx = 2
+ball.dy = 2
 
 
 # Pen
@@ -64,22 +66,22 @@ pen.write("Player A: 0 Player B: 0", align="center", font=("Courier", 12, "norma
 # Function
 def paddle_a_up():
     y = paddle_a.ycor()
-    y += 30
+    y += Paddle_movement
     paddle_a.sety(y)
 
 def paddle_a_down():
     y = paddle_a.ycor()
-    y -= 30
+    y -= Paddle_movement
     paddle_a.sety(y)
 
 def paddle_b_up():
     y = paddle_b.ycor()
-    y += 30
+    y += Paddle_movement
     paddle_b.sety(y)
 
 def paddle_b_down():
     y = paddle_b.ycor()
-    y -= 30
+    y -= Paddle_movement
     paddle_b.sety(y)
 
 
@@ -97,7 +99,6 @@ win.onkeypress(paddle_b_down, "Down")
 while True:
     win.update()
 
-
     # move the ball
     ball.setx(ball.xcor() + ball.dx)
     ball.sety(ball.ycor() + ball.dy)
@@ -111,12 +112,23 @@ while True:
         ball.sety(-290)
         ball.dy *= -1
 
+    if ball.xcor() >= 340:
+        speed += 1
+        if speed >= 5:
+            ball.dx = ball.dx * 2
+            ball.dy = ball.dy * 2
+            speed = 0
+            Paddle_movement += 20
+
+
+
     if ball.xcor() > 390:
         ball.goto(0, 0)
         ball.dx *= -1
         score_a += 1
         pen.clear()
         pen.write("Player A: {} Player B: {}". format(score_a, score_b), align="center", font=("Courier", 12, "normal"))
+        speed = 0
 
     if ball.xcor() < -390:
         ball.goto(0, 0)
@@ -124,6 +136,8 @@ while True:
         score_b += 1
         pen.clear()
         pen.write("Player A: {} Player B: {}".format(score_a, score_b), align="center", font=("Courier", 12, "normal"))
+        speed = 0
+
 
         # Paddle and ball collisions
     if (ball.xcor() > 340 and ball.xcor() < 350) and (ball.ycor() < paddle_b.ycor() + 40 and ball.ycor() > paddle_b.ycor() - 40):
@@ -133,3 +147,5 @@ while True:
     if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddle_a.ycor() + 40 and ball.ycor() > paddle_a.ycor() - 40):
         ball.setx(-340)
         ball.dx *= -1
+
+    print(speed)
