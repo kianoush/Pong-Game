@@ -4,6 +4,9 @@ Pong game
 
 import turtle
 import os
+import HandTrackingModule as htm
+import cv2
+import time
 
 # Define windows and background
 win = turtle.Screen()
@@ -93,13 +96,45 @@ win.onkeypress(paddle_a_down, "s")
 win.onkeypress(paddle_b_up, "Up")
 win.onkeypress(paddle_b_down, "Down")
 
+# webcam
+wCam, hCam = 640, 480
+
+cap = cv2.VideoCapture(0)
+cap.set(3, wCam)
+cap.set(4, hCam)
+
+pTime =0
+detector = htm.handDerector(detectionCon=0.7)
+
 
 
 # Main game loop
 while True:
-    win.update()
+
+    success, img = cap.read()
+    img = cv2.flip(img, 1)
+    img = detector.findHands(img)
+
+
+    lmList = detector.findPosition(img, draw=False)
+    if len(lmList) != 0:
+        print(lmList[2], lmList[4])
+
+    x1, y1 = lmList[4][1], lmList[4][2]
+
+    cTime = time.time()
+    fps = 1/(cTime - pTime)
+    pTime = cTime
+
+    cv2.putText(img,str(int(fps)),(10,30), cv2.FONT_HERSHEY_COMPLEX, .5,
+            (255,0,0), 2)
+
+
+
+
 
     # move the ball
+    win.update()
     ball.setx(ball.xcor() + ball.dx)
     ball.sety(ball.ycor() + ball.dy)
 
@@ -147,5 +182,9 @@ while True:
     if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddle_a.ycor() + 40 and ball.ycor() > paddle_a.ycor() - 40):
         ball.setx(-340)
         ball.dx *= -1
+
+
+    cv2.imshow("Img", img)
+    cv2.waitKey(1)
 
     print(speed)
