@@ -67,37 +67,37 @@ pen.write("Player A: 0 Player B: 0", align="center", font=("Courier", 12, "norma
 
 
 # Function
-def paddle_a_up():
-    y = paddle_a.ycor()
-    y += Paddle_movement
-    paddle_a.sety(y)
+def paddle_a_movement(x):
+    # y = paddle_a.ycor()
+    # y += Paddle_movement
+    paddle_a.sety(x)
 
-def paddle_a_down():
-    y = paddle_a.ycor()
-    y -= Paddle_movement
-    paddle_a.sety(y)
+# def paddle_a_down(x):
+#     # y = paddle_a.ycor()
+#     # y -= Paddle_movement
+#     paddle_a.sety(x)
 
-def paddle_b_up():
-    y = paddle_b.ycor()
-    y += Paddle_movement
-    paddle_b.sety(y)
+def paddle_b_movement(x):
+    # y = paddle_b.ycor()
+    # y += Paddle_movement
+    paddle_b.sety(x)
 
-def paddle_b_down():
-    y = paddle_b.ycor()
-    y -= Paddle_movement
-    paddle_b.sety(y)
+# def paddle_b_down():
+#     y = paddle_b.ycor()
+#     y -= Paddle_movement
+#     paddle_b.sety(y)
 
 
 # keyboard binding
 win.listen()
-win.onkeypress(paddle_a_up, "w")
-win.onkeypress(paddle_a_down, "s")
+# win.onkeypress(paddle_a_up, "w")
+# win.onkeypress(paddle_a_down, "s")
 
-win.onkeypress(paddle_b_up, "Up")
-win.onkeypress(paddle_b_down, "Down")
+# win.onkeypress(paddle_b_up, "Up")
+# win.onkeypress(paddle_b_down, "Down")
 
 # webcam
-wCam, hCam = 640, 480
+wCam, hCam = 800, 600
 
 cap = cv2.VideoCapture(0)
 cap.set(3, wCam)
@@ -116,11 +116,25 @@ while True:
     img = detector.findHands(img)
 
 
-    lmList = detector.findPosition(img, draw=False)
+    lmList = detector.findPosition(img,handNo=0 , draw=True)
     if len(lmList) != 0:
-        print(lmList[2], lmList[4])
+        x1, y1 = lmList[4][1], lmList[4][2]
 
-    x1, y1 = lmList[4][1], lmList[4][2]
+        if y1 <= 225:
+            y1 = 275 - y1
+        else:
+            y1 = - (y1 - 275)
+
+        if x1 <= 400:
+            paddle_a_movement(y1)
+        else:
+            paddle_b_movement(y1)
+
+
+
+
+
+
 
     cTime = time.time()
     fps = 1/(cTime - pTime)
@@ -128,7 +142,6 @@ while True:
 
     cv2.putText(img,str(int(fps)),(10,30), cv2.FONT_HERSHEY_COMPLEX, .5,
             (255,0,0), 2)
-
 
 
 
@@ -149,11 +162,11 @@ while True:
 
     if ball.xcor() >= 340:
         speed += 1
-        if speed >= 5:
-            ball.dx = ball.dx * 2
-            ball.dy = ball.dy * 2
-            speed = 0
-            Paddle_movement += 20
+        # if speed >= 5:
+        #     ball.dx = ball.dx * 2
+        #     ball.dy = ball.dy * 2
+        #     speed = 0
+        #     Paddle_movement += 20
 
 
 
@@ -187,4 +200,4 @@ while True:
     cv2.imshow("Img", img)
     cv2.waitKey(1)
 
-    print(speed)
+    #print(speed)
