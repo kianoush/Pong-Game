@@ -51,9 +51,8 @@ ball.shape("circle")
 ball.color("white")
 ball.penup()
 ball.goto(0, 0)
-ball.dx = 2
-ball.dy = 2
-
+ball.dx = 3
+ball.dy = 3
 
 # Pen
 pen = turtle.Turtle()
@@ -67,34 +66,12 @@ pen.write("Player A: 0 Player B: 0", align="center", font=("Courier", 12, "norma
 
 
 # Function
-def paddle_a_movement(x):
-    # y = paddle_a.ycor()
-    # y += Paddle_movement
-    paddle_a.sety(x)
+def paddle_a_movement(y):
+    paddle_a.sety(y)
 
-# def paddle_a_down(x):
-#     # y = paddle_a.ycor()
-#     # y -= Paddle_movement
-#     paddle_a.sety(x)
+def paddle_b_movement(y):
+    paddle_b.sety(y)
 
-def paddle_b_movement(x):
-    # y = paddle_b.ycor()
-    # y += Paddle_movement
-    paddle_b.sety(x)
-
-# def paddle_b_down():
-#     y = paddle_b.ycor()
-#     y -= Paddle_movement
-#     paddle_b.sety(y)
-
-
-# keyboard binding
-win.listen()
-# win.onkeypress(paddle_a_up, "w")
-# win.onkeypress(paddle_a_down, "s")
-
-# win.onkeypress(paddle_b_up, "Up")
-# win.onkeypress(paddle_b_down, "Down")
 
 # webcam
 wCam, hCam = 800, 600
@@ -104,21 +81,19 @@ cap.set(3, wCam)
 cap.set(4, hCam)
 
 pTime =0
-detector = htm.handDerector(detectionCon=0.7)
-
-
+detector = htm.HandDetector(detectionCon=0.7)
 
 # Main game loop
 while True:
 
     success, img = cap.read()
     img = cv2.flip(img, 1)
-    img = detector.findHands(img)
+    img = detector.findHands(img, draw=True)
 
-
-    lmList = detector.findPosition(img,handNo=0 , draw=True)
+    lmList = detector.findPosition(img, handNo=0, draw=True)
     if len(lmList) != 0:
         x1, y1 = lmList[4][1], lmList[4][2]
+        print(lmList[4][1], lmList[4][2])
 
         if y1 <= 225:
             y1 = 275 - y1
@@ -129,22 +104,6 @@ while True:
             paddle_a_movement(y1)
         else:
             paddle_b_movement(y1)
-
-
-
-
-
-
-
-    cTime = time.time()
-    fps = 1/(cTime - pTime)
-    pTime = cTime
-
-    cv2.putText(img,str(int(fps)),(10,30), cv2.FONT_HERSHEY_COMPLEX, .5,
-            (255,0,0), 2)
-
-
-
 
     # move the ball
     win.update()
